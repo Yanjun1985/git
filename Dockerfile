@@ -29,11 +29,10 @@ RUN touch cron.sh && cp cron.sh /var/spool/cron/crontabs/root
 RUN set -ex \
         && apk add --no-cache vim bash tini ca-certificates gcc procps net-tools \
     && apk add --no-cache --virtual=.fetch-deps gnupg libressl xz \
-    && apk add --no-cache --virtual=.build-deps  bzip2-dev coreutils dpkg-dev dpkg expat-dev gcc gdbm-dev dcron procps \
-        libc-dev libffi-dev libnsl-dev libtirpc-dev make linux-headers ncurses-dev libressl libressl-dev pax-utils \
-        readline-dev sqlite-dev tcl-dev tk tk-dev xz-dev zlib-dev g++ openblas-dev python-dev openldap-dev py-pyldaptzdata \
-        build-essential libaio1 libxml2-dev libxslt-dev python3-dev python-lxml \
-    && ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && apk add --no-cache --virtual=.build-deps  bzip2-dev coreutils dpkg-dev dpkg expat-dev gdbm-dev dcron procps \
+        libffi-dev libnsl-dev libtirpc-dev linux-headers ncurses-dev libressl libressl-dev pax-utils \
+        readline-dev sqlite-dev tcl-dev tk tk-dev xz-dev zlib-dev openblas-dev python-dev openldap-dev \
+        libxml2-dev libaio libxslt-dev python3-dev py-lxml build-base \
     && mkdir -p ${INSTALL_PATH} \
     && wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
 ##     && wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
