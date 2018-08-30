@@ -26,10 +26,13 @@ ENV INSTALL_PATH /software/python
 RUN mkdir -p /var/log/cron && mkdir -m 0644 -p /var/spool/cron/crontabs && touch /var/log/cron/cron.log && mkdir -m 0644 -p /etc/cron.d
 RUN touch cron.sh && cp cron.sh /var/spool/cron/crontabs/root
 
+#instal busybox
+RUN apk add -u --no-cache busybox && apk add --no-cache busybox-extras
+
 RUN set -ex \
         && apk add --no-cache vim bash tini ca-certificates gcc procps net-tools \
     && apk add --no-cache --virtual=.fetch-deps gnupg libressl xz \
-    && apk add --no-cache --virtual=.build-deps  bzip2-dev coreutils dpkg-dev dpkg expat-dev gdbm-dev dcron procps \
+    && apk add --no-cache --virtual=.build-deps  bzip2-dev coreutils dpkg-dev dpkg expat-dev gdbm-dev dcron procps vsftpd lftp\
         libffi-dev libnsl-dev libtirpc-dev linux-headers ncurses-dev libressl libressl-dev pax-utils \
         readline-dev sqlite-dev tcl-dev tk tk-dev xz-dev zlib-dev openblas-dev python-dev openldap-dev \
         libxml2-dev libaio libxslt-dev python3-dev py-lxml build-base \
