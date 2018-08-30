@@ -15,14 +15,14 @@ ENV LANG C.UTF-8
 
 # install ca-certificates so that HTTPS works consistently
 # the other runtime dependencies for Python are installed later
-RUN apk add --no-cache ca-certificates
+# RUN apk add --no-cache ca-certificates
 
 ENV GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
 ENV PYTHON_VERSION 3.6.5
 ENV INSTALL_PATH /software/python
 
 # install cron
-#RUN apk add dcron curl wget rsync ca-certificates && rm -rf /var/cache/apk/*
+RUN apk add dcron  && rm -rf /var/cache/apk/*
 RUN mkdir -p /var/log/cron && mkdir -m 0644 -p /var/spool/cron/crontabs && touch /var/log/cron/cron.log && mkdir -m 0644 -p /etc/cron.d
 RUN touch cron.sh && cp cron.sh /var/spool/cron/crontabs/root
 
@@ -30,12 +30,12 @@ RUN touch cron.sh && cp cron.sh /var/spool/cron/crontabs/root
 RUN apk add -u --no-cache busybox && apk add --no-cache busybox-extras
 
 RUN set -ex \
-        && apk add --no-cache vim bash tini ca-certificates gcc procps net-tools \
+        && apk add --no-cache vim bash tini ca-certificates procps net-tools curl wget rsync vsftpd lftp\
     && apk add --no-cache --virtual=.fetch-deps gnupg libressl xz \
-    && apk add --no-cache --virtual=.build-deps  bzip2-dev coreutils dpkg-dev dpkg expat-dev gdbm-dev dcron procps vsftpd lftp\
-        libffi-dev libnsl-dev libtirpc-dev linux-headers ncurses-dev libressl libressl-dev pax-utils \
+    && apk add --no-cache --virtual=.build-deps  build-base bzip2-dev coreutils dpkg-dev dpkg expat-dev gdbm-dev \
+        libffi-dev libnsl-dev libtirpc-dev linux-headers ncurses-dev libressl-dev pax-utils \
         readline-dev sqlite-dev tcl-dev tk tk-dev xz-dev zlib-dev openblas-dev python-dev openldap-dev \
-        libxml2-dev libaio libxslt-dev python3-dev py-lxml build-base \
+        libxml2-dev libaio libxslt-dev python3-dev py-lxml \
     && mkdir -p ${INSTALL_PATH} \
     && wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
 ##     && wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
@@ -47,7 +47,7 @@ RUN set -ex \
     && rm python.tar.xz \
     \
 # add build deps before removing fetch deps in case there's overlap
-#    && apk del .fetch-deps \
+    && apk del .fetch-deps \
 #    \
     && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && cd ${INSTALL_PATH} && ./configure \
@@ -56,7 +56,7 @@ RUN set -ex \
         --enable-shared \
         --with-system-expat \
         --with-system-ffi \
-#        --without-ensurepip \
+#       --without-ensurepip \
     && make -j "$(nproc)" EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000" \
 # set thread stack size to 1MB so we don't segfault before we hit sys.getrecursionlimit()
 # https://github.com/alpinelinux/aports/commit/2026e1259422d4e0cf92391ca2d3844356c649d0
@@ -69,7 +69,7 @@ RUN set -ex \
 ##             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 ##     )" \
 ##     && apk add --virtual .python-rundeps $runDeps \
-##     && apk del .build-deps \
+    && apk del .build-deps \
 ##     \
     && find /usr/local -depth \
         \( \
