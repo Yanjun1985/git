@@ -47,7 +47,7 @@ RUN set -ex \
     && rm python.tar.xz \
     \
 # add build deps before removing fetch deps in case there's overlap
-    && apk del .fetch-deps \
+#    && apk del .fetch-deps \
 #    \
     && gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
     && cd ${INSTALL_PATH} && ./configure \
@@ -69,7 +69,7 @@ RUN set -ex \
 ##             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
 ##     )" \
 ##     && apk add --virtual .python-rundeps $runDeps \
-    && apk del .build-deps \
+##     && apk del .build-deps \
 ##     \
     && find /usr/local -depth \
         \( \
